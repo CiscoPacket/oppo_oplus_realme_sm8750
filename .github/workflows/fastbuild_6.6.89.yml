@@ -325,7 +325,7 @@ jobs:
             cd kernel_workspace
             wget https://github.com/$GITHUB_REPOSITORY/raw/refs/heads/$GITHUB_REF_NAME/other_patch/60_zeromount-android15-6.6.patch -O ./common/60_zeromount-android15-6.6.patch
             cd ./common
-            patch -p1 -F3 60_zeromount-android15-6.6.patch
+            patch -p1 -F3 < 60_zeromount-android15-6.6.patch || true
           else
             echo "已选择关闭SUSFS，跳过zeromount配置..."
           fi
