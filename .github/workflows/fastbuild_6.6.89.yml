@@ -27,6 +27,11 @@ on:
         required: true
         type: boolean
         default: 'true'
+      zeromount_enable:
+        description: '是否开启zeromount(用于隐藏挂载功能)'
+        required: true
+        type: boolean
+        default: 'true'
       kpm_enable:
         description: '是否开启kpm(使用KpatchNext独立实现kpm(支持任意KSU/面具环境); 不需要可保持默认关闭)'
         required: true
@@ -305,13 +310,26 @@ jobs:
           else
             echo "已选择无内置KernelSU模式，跳过susfs配置..."
           fi
-          if [[ ${{ github.event.inputs.ksu_type }} == "ksu" ]]; then
+          if [[ ${{ github.event.inputs.ksu_type }} != "ksu" ]]; then
             echo "正在为原版 KernelSU (tiann/KernelSU)添加补丁..."
             cp ./susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch ./KernelSU/
             cd ./KernelSU
             patch -p1 < 10_enable_susfs_for_ksu.patch || true
           fi
-          
+
+      - name: 应用ZeroMount补丁
+        if: inputs.zeromount_enable
+        run: |
+          if [[ ${{ github.event.inputs.ksu_type }} != "false" ]]; then
+            echo "正在添加ZeroMount补丁…"
+            cd kernel_workspace
+            wget https://github.com/$GITHUB_REPOSITORY/raw/refs/heads/$GITHUB_REF_NAME/other_patch/60_zeromount-android15-6.6.patch -O ./common/60_zeromount-android15-6.6.patch
+            cd ./common
+            patch -p1 -F3 60_zeromount-android15-6.6.patch
+          else
+            echo "已选择关闭SUSFS，跳过zeromount配置..."
+          fi
+
       - name: 应用lz4 1.10.0 & zstd 1.5.7补丁
         if: inputs.lz4_enable
         run: |
