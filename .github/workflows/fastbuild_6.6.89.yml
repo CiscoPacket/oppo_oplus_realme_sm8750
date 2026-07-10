@@ -31,7 +31,7 @@ on:
         description: '是否开启zeromount(用于隐藏挂载功能)'
         required: true
         type: boolean
-        default: 'true'
+        default: 'false'
       kpm_enable:
         description: '是否开启kpm(使用KpatchNext独立实现kpm(支持任意KSU/面具环境); 不需要可保持默认关闭)'
         required: true
@@ -323,7 +323,7 @@ jobs:
           if [[ ${{ github.event.inputs.ksu_type }} != "false" ]]; then
             echo "正在添加ZeroMount补丁…"
             cd kernel_workspace
-            wget https://github.com/$GITHUB_REPOSITORY/raw/refs/heads/$GITHUB_REF_NAME/other_patch/60_zeromount-android15-6.6.patch -O ./common/60_zeromount-android15-6.6.patch
+            wget https://raw.githubusercontent.com/Enginex0/Super-Builders/refs/heads/main/android15-6.6/ReSukiSU/patches/60_zeromount-android15-6.6.patch -O ./common/60_zeromount-android15-6.6.patch
             cd ./common
             patch -p1 -F3 < 60_zeromount-android15-6.6.patch || true
           else
