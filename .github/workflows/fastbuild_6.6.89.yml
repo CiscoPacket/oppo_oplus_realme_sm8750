@@ -255,6 +255,9 @@ jobs:
         run: |
           # 进入内核工作目录
           cd kernel_workspace
+          wget https://raw.githubusercontent.com/Anatdx/oppo_oplus_realme_sm8850/refs/heads/main/security_patch/cve-2026-43499-rtmutex-6.12.patch -O ./common/cve-2026-43499-rtmutex-6.12.patch
+          cd ./common
+          patch -p1 -F 3 < cve-2026-43499-rtmutex-6.12.patch
           if [[ ${{ github.event.inputs.ksu_type }} == "sukisu" || ${{ github.event.inputs.ksu_type }} == "resukisu" ]]; then
             echo "正在配置ReSukiSU（由于SukiSU长期未维护无法正常编译，且ReSukiSU兼容sukisu管理器，故SukiSU源码仓库已重定向为resukisu）..."
             curl -LSs "https://raw.githubusercontent.com/CiscoPacket/ReSukiSU/refs/heads/main/kernel/setup.sh" | bash -s main
